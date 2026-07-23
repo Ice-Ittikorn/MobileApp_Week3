@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async'; // เพิ่มบรรทัดนี้ที่ด้านบนของไฟล์ (ต่อจาก import แรก)
 
 // จุดเริ่มต้นของ App ทุกตัว
 void main() {
@@ -32,7 +33,9 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
-      body: const CounterSection(),
+      body: const SingleChildScrollView(
+        child: Column(children: [ClockWidget(), CounterSection()]),
+      ),
     );
   }
 }
@@ -200,6 +203,94 @@ class _CounterSectionState extends State<CounterSection> {
                   ),
                 );
               }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ClockWidget extends StatefulWidget {
+  const ClockWidget({super.key});
+
+  @override
+  State<ClockWidget> createState() => _ClockWidgetState();
+}
+
+class _ClockWidgetState extends State<ClockWidget> {
+  late DateTime _currentTime;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState(); // ❗ ต้องเรียกก่อนเสมอ
+    _currentTime = DateTime.now();
+
+    // ตั้ง Timer อัปเดตเวลาทุก 1 วินาที
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        // ❗ ตรวจสอบก่อน setState เสมอ
+        setState(() {
+          _currentTime = DateTime.now();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // ❗ ต้องยกเลิก Timer เพื่อป้องกัน Memory Leak
+    super.dispose(); // ❗ ต้องเรียกหลังสุดเสมอ
+  }
+
+  String _formatTime(DateTime dt) {
+    String h = dt.hour.toString().padLeft(2, '0');
+    String m = dt.minute.toString().padLeft(2, '0');
+    String s = dt.second.toString().padLeft(2, '0');
+    return '$h:$m:$s';
+  }
+
+  String _formatDate(DateTime dt) {
+    const months = [
+      '',
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.',
+    ];
+    return '${dt.day} ${months[dt.month]} ${dt.year + 543}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            const Icon(Icons.access_time, size: 40, color: Colors.indigo),
+            const SizedBox(height: 8),
+            Text(
+              _formatTime(_currentTime),
+              style: const TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+            Text(
+              _formatDate(_currentTime),
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
           ],
         ),
