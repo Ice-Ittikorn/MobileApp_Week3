@@ -104,7 +104,7 @@ class _CounterSectionState extends State<CounterSection> {
 
   // === Methods ===
   void _increment() {
-    (() {
+    setState(() {
       _count += _step;
       // ลอง: แก้เป็น _count++ แล้วดูว่าต่างกันไหม
     });
