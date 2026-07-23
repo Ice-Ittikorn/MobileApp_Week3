@@ -240,7 +240,6 @@ class _ClockWidgetState extends State<ClockWidget> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // ❗ ต้องยกเลิก Timer เพื่อป้องกัน Memory Leak
     super.dispose(); // ❗ ต้องเรียกหลังสุดเสมอ
   }
 
