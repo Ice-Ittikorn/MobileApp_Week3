@@ -262,13 +262,48 @@ class CounterSection extends StatefulWidget {
 class _CounterSectionState extends State<CounterSection> {
   int _count = 0;
   int _step = 1;
+  final List<String> _history = [];
+
+  String _pad(int n) => n.toString().padLeft(2, '0');
+
+  void _recordHistory(String actionText) {
+    final now = DateTime.now();
+    final timeStr = '${_pad(now.hour)}:${_pad(now.minute)}:${_pad(now.second)}';
+    _history.insert(0, '$timeStr — $actionText');
+  }
+
+  void _increment() {
+    setState(() {
+      _count += _step;
+      _recordHistory('เพิ่ม $_step (รวม: $_count)');
+    });
+  }
+
+  void _decrement() {
+    setState(() {
+      _count -= _step;
+      _recordHistory('ลด $_step (รวม: $_count)');
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _count = 0;
+      _recordHistory('Reset (รวม: $_count)');
+    });
+  }
+
+  void _clearHistory() {
+    setState(() {
+      _history.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             '$_count',
@@ -284,19 +319,19 @@ class _CounterSectionState extends State<CounterSection> {
             children: [
               FloatingActionButton(
                 heroTag: 'dec',
-                onPressed: () => setState(() => _count -= _step),
+                onPressed: _decrement,
                 backgroundColor: Colors.red.shade50,
                 child: const Icon(Icons.remove, color: Colors.red),
               ),
               const SizedBox(width: 16),
               OutlinedButton(
-                onPressed: () => setState(() => _count = 0),
+                onPressed: _reset,
                 child: const Text('Reset'),
               ),
               const SizedBox(width: 16),
               FloatingActionButton(
                 heroTag: 'inc',
-                onPressed: () => setState(() => _count += _step),
+                onPressed: _increment,
                 backgroundColor: Colors.green.shade50,
                 child: const Icon(Icons.add, color: Colors.green),
               ),
@@ -318,6 +353,47 @@ class _CounterSectionState extends State<CounterSection> {
                   ),
                 )
                 .toList(),
+          ),
+          const SizedBox(height: 16),
+          const Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'ประวัติการใช้งาน',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              OutlinedButton.icon(
+                onPressed: _history.isEmpty ? null : _clearHistory,
+                icon: const Icon(Icons.delete_outline, size: 18),
+                label: const Text('ล้าง History'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: _history.isEmpty
+                ? const Center(
+                    child: Text(
+                      'ยังไม่มีประวัติการใช้งาน',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _history.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Text(
+                            _history[index],
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
