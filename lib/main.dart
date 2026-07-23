@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       title: 'Week 02 Lab',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
       home: const MainScreen(),
