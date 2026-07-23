@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
-      body: const SingleChildScrollView(child: GreetingForm()),
+      body: const CounterSection(),
     );
   }
 }
@@ -104,7 +104,7 @@ class _CounterSectionState extends State<CounterSection> {
 
   // === Methods ===
   void _increment() {
-    setState(() {
+    (() {
       _count += _step;
       // ลอง: แก้เป็น _count++ แล้วดูว่าต่างกันไหม
     });
@@ -203,112 +203,6 @@ class _CounterSectionState extends State<CounterSection> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class GreetingForm extends StatefulWidget {
-  const GreetingForm({super.key});
-
-  @override
-  State<GreetingForm> createState() => _GreetingFormState();
-}
-
-class _GreetingFormState extends State<GreetingForm> {
-  // TextEditingController จัดการ TextField
-  final _nameController = TextEditingController();
-  String _greeting = '';
-  String _error = '';
-
-  @override
-  void dispose() {
-    // ❗ ต้อง dispose Controller เสมอ เพื่อป้องกัน Memory Leak
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  void _generateGreeting() {
-    final name = _nameController.text.trim();
-
-    setState(() {
-      if (name.isEmpty) {
-        _error = 'กรุณากรอกชื่อ';
-        _greeting = '';
-      } else {
-        _error = '';
-        final hour = DateTime.now().hour;
-        String timeOfDay;
-        if (hour < 12) {
-          timeOfDay = 'ตอนเช้า';
-        } else if (hour < 17) {
-          timeOfDay = 'ตอนบ่าย';
-        } else {
-          timeOfDay = 'ตอนเย็น';
-        }
-        _greeting = 'สวัสดี$timeOfDay คุณ$name! 👋\nยินดีต้อนรับสู่ Flutter';
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'สร้างคำทักทาย',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-
-          // TextField — ช่องรับข้อมูล
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: 'ชื่อของคุณ',
-              hintText: 'เช่น สมชาย',
-              prefixIcon: const Icon(Icons.person),
-              border: const OutlineInputBorder(),
-              // แสดง error ถ้ามี
-              errorText: _error.isEmpty ? null : _error,
-            ),
-            // กด Enter บน Keyboard → สร้างคำทักทาย
-            onSubmitted: (_) => _generateGreeting(),
-          ),
-
-          const SizedBox(height: 12),
-
-          // ปุ่ม
-          ElevatedButton.icon(
-            onPressed: _generateGreeting,
-            icon: const Icon(Icons.waving_hand),
-            label: const Text('สร้างคำทักทาย'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // แสดงผล
-          if (_greeting.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.indigo.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.indigo.shade200),
-              ),
-              child: Text(
-                _greeting,
-                style: const TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-            ),
-        ],
       ),
     );
   }
