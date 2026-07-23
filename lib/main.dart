@@ -35,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
     DashboardPage(),
     CounterPage(),
     FormPage(),
+    AboutPage(),
   ];
 
   @override
@@ -53,6 +54,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           NavigationDestination(icon: Icon(Icons.calculate), label: 'Counter'),
           NavigationDestination(icon: Icon(Icons.edit), label: 'Form'),
+          NavigationDestination(icon: Icon(Icons.person), label: 'About'),
         ],
       ),
     );
@@ -137,6 +139,65 @@ class FormPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: const GreetingForm(),
+    );
+  }
+}
+
+// ─── Page 4: About ───────────────────────────────────────
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('About'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 60,
+                foregroundImage: const AssetImage('img/IMG_0305.JPG'),
+                child: const Text(
+                  'I',
+                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'ITTIKORN TONGSIMA',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'รหัสนักศึกษา: 67030261',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'คณะครุศาสตร์อุตสาหกรรมเเละเทคโนโลยี',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.indigo,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
