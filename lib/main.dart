@@ -412,6 +412,7 @@ class GreetingForm extends StatefulWidget {
 
 class _GreetingFormState extends State<GreetingForm> {
   final _nameController = TextEditingController();
+  String _selectedLanguage = 'ไทย';
   String _greeting = '';
   String _error = '';
 
@@ -430,12 +431,36 @@ class _GreetingFormState extends State<GreetingForm> {
       } else {
         _error = '';
         final h = DateTime.now().hour;
-        final period = h < 12
-            ? 'ตอนเช้า'
-            : h < 17
-            ? 'ตอนบ่าย'
-            : 'ตอนเย็น';
-        _greeting = 'สวัสดี$period คุณ$name! 👋\nยินดีต้อนรับสู่ Flutter';
+        final isMorning = h < 12;
+        final isAfternoon = h >= 12 && h < 17;
+
+        switch (_selectedLanguage) {
+          case 'อังกฤษ':
+            final timeOfDay = isMorning
+                ? 'Good morning'
+                : isAfternoon
+                ? 'Good afternoon'
+                : 'Good evening';
+            _greeting = '$timeOfDay, $name! 👋\nWelcome to Flutter';
+            break;
+          case 'ญี่ปุ่น':
+            final timeOfDay = isMorning
+                ? 'おはようございます'
+                : isAfternoon
+                ? 'こんにちは'
+                : 'こんばんは';
+            _greeting = '$timeOfDay, $name さん! 👋\nFlutterへようこそ';
+            break;
+          case 'ไทย':
+          default:
+            final period = isMorning
+                ? 'ตอนเช้า'
+                : isAfternoon
+                ? 'ตอนบ่าย'
+                : 'ตอนเย็น';
+            _greeting = 'สวัสดี$period คุณ$name! 👋\nยินดีต้อนรับสู่ Flutter';
+            break;
+        }
       }
     });
   }
@@ -443,6 +468,7 @@ class _GreetingFormState extends State<GreetingForm> {
   void _clear() {
     _nameController.clear();
     setState(() {
+      _selectedLanguage = 'ไทย';
       _greeting = '';
       _error = '';
     });
@@ -465,6 +491,27 @@ class _GreetingFormState extends State<GreetingForm> {
               errorText: _error.isEmpty ? null : _error,
             ),
             onSubmitted: (_) => _submit(),
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String>(
+            initialValue: _selectedLanguage,
+            decoration: const InputDecoration(
+              labelText: 'ภาษาของคำทักทาย',
+              prefixIcon: Icon(Icons.language),
+              border: OutlineInputBorder(),
+            ),
+            items: const [
+              DropdownMenuItem(value: 'ไทย', child: Text('ไทย')),
+              DropdownMenuItem(value: 'อังกฤษ', child: Text('อังกฤษ')),
+              DropdownMenuItem(value: 'ญี่ปุ่น', child: Text('ญี่ปุ่น')),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  _selectedLanguage = value;
+                });
+              }
+            },
           ),
           const SizedBox(height: 12),
           Row(
